@@ -1,10 +1,14 @@
 import React,{useState} from 'react';
 
-const Formulario = () => {
+const Formulario = ({guardarBusquedaLetra}) => {
     const [busqueda,guardarBusqueda] = useState({
         artista:'',
         cancion:''
-    })
+    });
+    const[error,guardarError] = useState(false);
+    const {artista,cancion} = busqueda;
+
+
     //funcion a cada input para leer su contenido
     const actualizarState = e => {
         guardarBusqueda({
@@ -12,11 +16,26 @@ const Formulario = () => {
             [e.target.name] : e.target.value
         })
     }
+    //Consultar las apis
+    const buscarInformacion = e => {
+        e.preventDefault();
+        if(artista.trim() ==='' || cancion.trim()==='') {
+            guardarError(true);
+            return;
+        }
+        guardarError(false);
+        //Todo bien, pasar al componente principal
+        guardarBusquedaLetra(busqueda);
+        
+    }
     return ( 
         <div className="bg-info">
+               {error && <p className="alert alert-danger text-center p-2">Todos los campos son obligatorios</p>}
             <div className="container">
                 <div className="row">
+                 
                     <form 
+                        onSubmit={buscarInformacion}
                         className="col card text-white bg-transparent mb-5 pt-5 pb-2"
                         >
                             <fieldset>
@@ -31,6 +50,7 @@ const Formulario = () => {
                                                 name="artista"
                                                 placeholder="Nombre Artista"
                                                 onChange={actualizarState}
+                                                value={artista}
                                             />
                                         </div>
                                        
@@ -44,6 +64,7 @@ const Formulario = () => {
                                                 name="cancion"
                                                 placeholder="Nombre Cancion"
                                                 onChange={actualizarState}
+                                                value={cancion}
                                             />
                                         </div>
                                     </div>
